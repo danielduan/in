@@ -14,7 +14,6 @@ var User = require('../models/User');
 //   mobile_auth_token: string
 // }
 exports.login = function(req, res) {
-  console.log(req.body);
   req.assert('email', 'Email is not valid').isEmail();
   req.assert('password', 'Password cannot be blank').notEmpty();
   var errors = req.validationErrors();
@@ -55,6 +54,9 @@ exports.login = function(req, res) {
 //   exists: bool
 // }
 exports.find_user = function(req, res) {
+  if (req.body.user === req.user.username) {
+    return res.json({ error: "This is your username" });
+  }
   User.findOne({ username: req.body.user }, function(err, user) {
     if (!user) return res.json({ error: "User not found" });
     return res.json({ exists: true });
@@ -79,3 +81,12 @@ exports.send = function(req, res) {
       message: req.body.message, success: true });
   });
 };
+
+//middleware for mobile auth
+exports.auth = function(req, res, next) {
+  User.findOne({ mobile_auth_token: req.body.mobile_auth_token }, function (err, user) {
+    if (!user) return res.json({ error: "Invalid auth token" });
+    req.user = user;
+    next();
+  });
+}
