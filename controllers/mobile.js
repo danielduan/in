@@ -95,7 +95,7 @@ exports.send = function(req, res) {
     note.badge = 3;
     note.retryLimit = 1;
     note.sound = "ping.aiff";
-    note.alert = req.user.username + ": " + req.query.message;
+    note.alert = req.user.username + ": hack[in]";//+ req.query.message;
     note.payload = { 'messageFrom': req.user.username };
     apn_connection.pushNotification(note, user.iphone_push_token);
 
