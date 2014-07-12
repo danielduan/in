@@ -4,12 +4,13 @@ var crypto = require('crypto');
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
+  username: { type: String, unique: true, lowercase: true },
   password: String,
 
   instagram: String,
   tokens: Array,
 
-  mobile_auth_token: String,
+  mobile_auth_token: { type: String, unique: true },
   iphone_push_token: String,
 
   profile: {

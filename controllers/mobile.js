@@ -9,8 +9,8 @@ var User = require('../models/User');
 // }
 // login res:
 // {
-//   success: bool,
-//   error: [string],
+//   error: string,
+//   username: string,
 //   mobile_auth_token: string
 // }
 exports.login = function(req, res) {
@@ -35,15 +35,47 @@ exports.login = function(req, res) {
       user.save(function(err) {
         if (err) return res.json({ error: err });
         req.logIn(user, function(err) {
-          res.json({ success: true, mobile_auth_token: user.mobile_auth_token });
+          res.json({ username: user.username,
+            mobile_auth_token: user.mobile_auth_token
+          });
         });
       });
     });
   })(req, res);
 };
 
+// find_user req:
+// {
+//   mobile_auth_token: string,
+//   user: string, (username)
+// }
+// find_user res:
+// {
+//   error: string,
+//   exists: bool
+// }
+exports.find_user = function(req, res) {
+  User.findOne({ username: req.body.user }, function(err, user) {
+    if (!user) return res.json({ error: "User not found" });
+    return res.json({ exists: true });
+  });
+};
+
+// send req:
+// {
+//   mobile_auth_token: string,
+//   recipient: string, (username)
+//   message: string,
+// }
+// send res:
+// {
+//   error: string,
+//   success: bool
+// }
 exports.send = function(req, res) {
-  res.render('api/index', {
-    title: 'API Examples'
+  User.findOne({ username: req.body.recipient }, function(err, user) {
+    if (!user) return res.json({ error: "Invalid recipient" });
+    return res.json({ recipient_push_token: user.iphone_push_token,
+      message: req.body.message, success: true });
   });
 };
