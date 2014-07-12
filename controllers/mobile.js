@@ -90,8 +90,8 @@ exports.send = function(req, res) {
   User.findOne({ username: req.query.recipient }, function(err, user) {
     if (!user) return res.json({ error: "Invalid recipient" });
 
-    var msg = ["hack[in]", "sleep[in]", "eat[in]", "message[in]", "[in]charge", "[in]tern"];
-    var i = Math.floor(Math.random() * 6);
+    var msg = ["hack[in]", "sleep[in]", "eat[in]", "messag[in]", "[in]charge", "[in]tern", "ride[in]"];
+    var i = Math.floor(Math.random() * 7);
 
     var note = new apn.notification();
     note.expiry = Math.floor(Date.now() / 1000) + 36000; // Expires 1 hour from now.
