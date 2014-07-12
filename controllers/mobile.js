@@ -1,10 +1,5 @@
-var _ = require('lodash');
-var async = require('async');
-var crypto = require('crypto');
 var passport = require('passport');
 var User = require('../models/User');
-var LocalStrategy = require('passport-local').Strategy;
-
 
 // login req:
 // {
@@ -18,31 +13,26 @@ var LocalStrategy = require('passport-local').Strategy;
 //   error: [string],
 //   mobile_auth_token: string
 // }
-
 exports.login = function(req, res) {
-  var email = req.body.email;
-  var password = req.body.password;
-  console.log("req");
-  passport.use(new LocalStrategy(function(email, password) {
-    User.findOne({ email: email }, function(err, user) {
-      if (err) {
-        return res.json({ error: err });
-      }
-      if (!user) {
-        return res.json({ error: 'Incorrect email.' });
-      }
-      if (!user.comparePassword(password, function(err, success) {
-        if (err) {
-          return res.json({ error: 'Incorrect password.' });
-        } else {
-          return res.json({
-            success: true,
-            mobile_auth_token: user.mobile_auth_token
-          });
-        }
-      }));
+  console.log(req.body);
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('password', 'Password cannot be blank').notEmpty();
+  var errors = req.validationErrors();
+
+  if (errors) {
+    return res.json({ error: errors.join(" ") });
+  }
+
+  passport.authenticate('local', function(err, user, info) {
+    if (err) return res.json({ error: err });
+    if (!user) {
+      return res.json({ error: info.message });
+    }
+    req.logIn(user, function(err) {
+      if (err) res.json({ error: err });
+      return res.json({ success: true, mobile_auth_token: user.mobile_auth_token });
     });
-  }));
+  })(req, res);
 };
 
 exports.send = function(req, res) {
