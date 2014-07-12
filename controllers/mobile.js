@@ -93,6 +93,7 @@ exports.send = function(req, res) {
     var note = new apn.notification();
     note.expiry = Math.floor(Date.now() / 1000) + 36000; // Expires 1 hour from now.
     note.badge = 3;
+    note.retryLimit = 5;
     note.sound = "ping.aiff";
     note.alert = req.user.username + ": " + req.query.message;
     note.payload = { 'messageFrom': req.user.username };
