@@ -1,6 +1,36 @@
 var passport = require('passport');
 var User = require('../models/User');
 
+var apn = require('apn');
+if (process.env.NODE_ENV !== 'production') {
+  var apn_connection = new apn.connection({
+    cert: '../certs/cert.pem',
+    key: '../certs/key.pem'
+  });
+} else {
+  var apn_connection = new apn.connection({
+    cert: '../certs/cert.pem',
+    key: '../certs/key.pem'
+  });
+}
+
+apn_connection.on('connected', function() {
+    console.log("Connected");
+});
+apn_connection.on('transmitted', function(notification, device) {
+    console.log("Notification transmitted to:" + device.token.toString('hex'));
+});
+apn_connection.on('transmissionError', function(errCode, notification, device) {
+    console.error("Notification caused error: " + errCode + " for device ", device, notification);
+});
+apn_connection.on('timeout', function () {
+    console.log("Connection Timeout");
+});
+apn_connection.on('disconnected', function() {
+    console.log("Disconnected from APNS");
+});
+apn_connection.on('socketError', console.error);
+
 // login req:
 // {
 //   email: string,
@@ -77,6 +107,15 @@ exports.find_user = function(req, res) {
 exports.send = function(req, res) {
   User.findOne({ username: req.body.recipient }, function(err, user) {
     if (!user) return res.json({ error: "Invalid recipient" });
+
+    var note = new apn.notification();
+    note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+    note.badge = 3;
+    note.sound = "ping.aiff";
+    note.alert = req.body.message;
+    note.payload = { 'messageFrom': req.user.username };
+    apn_connection.pushNotification(note, user.iphone_push_token);
+
     return res.json({ recipient_push_token: user.iphone_push_token,
       message: req.body.message, success: true });
   });
@@ -115,7 +154,7 @@ exports.get_friends = function(req, res) {
 
 //middleware for mobile auth
 exports.auth = function(req, res, next) {
-  User.findOne({ mobile_auth_token: req.body.mobile_auth_token }, function (err, user) {
+  User.findOne({ mobile_auth_token: req.query.mobile_auth_token }, function (err, user) {
     if (!user) return res.json({ error: "Invalid auth token" });
     req.user = user;
     next();
