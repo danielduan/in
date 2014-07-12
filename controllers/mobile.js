@@ -132,7 +132,8 @@ exports.send = function(req, res) {
 //   success: bool
 // }
 exports.save_friends = function(req, res) {
-  req.user.friends = req.body.friends;
+  req.user.friends = JSON.parse(req.query.friends);
+  console.log(req.user.friends);
   req.user.save(function(err) {
     if (err) return res.json({ error: err });
     return res.json({ success: true });

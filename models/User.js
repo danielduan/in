@@ -10,7 +10,7 @@ var userSchema = new mongoose.Schema({
   instagram: String,
   tokens: Array,
 
-  friends: String,
+  friends: Array,
 
   mobile_auth_token: { type: String, unique: true },
   iphone_push_token: String,
