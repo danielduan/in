@@ -95,7 +95,7 @@ exports.send = function(req, res) {
 
     var note = new apn.notification();
     note.expiry = Math.floor(Date.now() / 1000) + 36000; // Expires 1 hour from now.
-    note.badge = 3;
+    note.badge = 2;
     note.retryLimit = 1;
     note.sound = "ping.aiff";
     note.alert = req.user.username + ": " + msg[i];//": hack[in]";//+ req.query.message;
