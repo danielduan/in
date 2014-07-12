@@ -96,6 +96,7 @@ app.use(passport.session());
 app.use(flash());
 app.use(function(req, res, next) {
   // CSRF protection.
+  console.log(req.body);
   if (_.contains(csrfExclude, req.path)) return next();
   csrf(req, res, next);
 });
@@ -141,11 +142,11 @@ app.get('/account/unlink/:provider', passportConf.isAuthenticated, userControlle
  * Mobile routes.
  */
 
-app.post('/mobile/login', mobileController.login);
-app.post('/mobile/send', mobileController.auth, mobileController.send);
-app.post('/mobile/find_user', mobileController.auth, mobileController.find_user);
-app.post('/mobile/save_friends', mobileController.auth, mobileController.save_friends);
-app.post('/mobile/get_friends', mobileController.auth, mobileController.get_friends);
+app.get('/mobile/login', mobileController.login);
+app.get('/mobile/send', mobileController.auth, mobileController.send);
+app.get('/mobile/find_user', mobileController.auth, mobileController.find_user);
+app.get('/mobile/save_friends', mobileController.auth, mobileController.save_friends);
+app.get('/mobile/get_friends', mobileController.auth, mobileController.get_friends);
 
 /**
  * API examples routes.
