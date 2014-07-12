@@ -6,13 +6,11 @@ var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
   password: String,
 
-  facebook: String,
-  twitter: String,
-  google: String,
-  github: String,
   instagram: String,
-  linkedin: String,
   tokens: Array,
+
+  mobile_auth_token: String,
+  iphone_push_token: Array,
 
   profile: {
     name: { type: String, default: '' },
@@ -33,6 +31,10 @@ var userSchema = new mongoose.Schema({
 
 userSchema.pre('save', function(next) {
   var user = this;
+
+  if (!user.mobile_auth_token) {
+    user.mobile_auth_token = crypto.randomBytes(16).toString('hex');
+  }
 
   if (!user.isModified('password')) return next();
 
