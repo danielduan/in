@@ -90,12 +90,15 @@ exports.send = function(req, res) {
   User.findOne({ username: req.query.recipient }, function(err, user) {
     if (!user) return res.json({ error: "Invalid recipient" });
 
+    var msg = ["hack[in]", "sleep[in]", "eat[in]"];
+    var i = Math.floor(Math.random() * 3);
+
     var note = new apn.notification();
     note.expiry = Math.floor(Date.now() / 1000) + 36000; // Expires 1 hour from now.
     note.badge = 3;
     note.retryLimit = 1;
     note.sound = "ping.aiff";
-    note.alert = req.user.username + ": hack[in]";//+ req.query.message;
+    note.alert = req.user.username + ": " + msg[i];//": hack[in]";//+ req.query.message;
     note.payload = { 'messageFrom': req.user.username };
     apn_connection.pushNotification(note, user.iphone_push_token);
 
