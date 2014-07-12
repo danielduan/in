@@ -21,9 +21,5 @@ apn_connection.on('disconnected', function() {
 apn_connection.on('socketError', console.error);
 
 export send = function(req, res) {
-  var note = new apn.notification();
-  note.setAlertText(req.message);
-  note.badge = 1;
-
-  apn_connection.pushNotification(note, req.push.token);
+  
 }

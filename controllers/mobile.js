@@ -122,19 +122,18 @@ exports.send = function(req, res) {
   });
 };
 
-// save_friends req:
+// save_friend req:
 // {
 //   mobile_auth_token: string,
-//   friends: stringified friends
+//   friend: string (username to append to array)
 // }
-// save_friends res:
+// save_friend res:
 // {
 //   error: string,
 //   success: bool
 // }
-exports.save_friends = function(req, res) {
-  req.user.friends = JSON.parse(req.query.friends);
-  console.log(req.query.friends);
+exports.save_friend = function(req, res) {
+  req.user.friends.push(req.query.friend);
   req.user.save(function(err) {
     if (err) return res.json({ error: err });
     return res.json({ success: true });

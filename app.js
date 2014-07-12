@@ -62,7 +62,7 @@ var week = day * 7;
  */
 
 var csrfExclude = ['/mobile/login', '/mobile/send',
-  '/mobile/find_user', '/mobile/save_friends', '/mobile/get_friends'];
+  '/mobile/find_user', '/mobile/save_friend', '/mobile/get_friends'];
 
 /**
  * Express configuration.
@@ -96,7 +96,6 @@ app.use(passport.session());
 app.use(flash());
 app.use(function(req, res, next) {
   // CSRF protection.
-  console.log(req.body);
   if (_.contains(csrfExclude, req.path)) return next();
   csrf(req, res, next);
 });
@@ -145,13 +144,13 @@ app.get('/account/unlink/:provider', passportConf.isAuthenticated, userControlle
 app.get('/mobile/login', mobileController.login);
 app.get('/mobile/send', mobileController.auth, mobileController.send);
 app.get('/mobile/find_user', mobileController.auth, mobileController.find_user);
-app.get('/mobile/save_friends', mobileController.auth, mobileController.save_friends);
+app.get('/mobile/save_friend', mobileController.auth, mobileController.save_friend);
 app.get('/mobile/get_friends', mobileController.auth, mobileController.get_friends);
 
 app.post('/mobile/login', mobileController.login);
 app.post('/mobile/send', mobileController.auth, mobileController.send);
 app.post('/mobile/find_user', mobileController.auth, mobileController.find_user);
-app.post('/mobile/save_friends', mobileController.auth, mobileController.save_friends);
+app.post('/mobile/save_friend', mobileController.auth, mobileController.save_friend);
 app.post('/mobile/get_friends', mobileController.auth, mobileController.get_friends);
 
 /**
