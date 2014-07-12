@@ -1,16 +1,17 @@
 var passport = require('passport');
 var User = require('../models/User');
+var path = require('path');
 
 var apn = require('apn');
 if (process.env.NODE_ENV !== 'production') {
   var apn_connection = new apn.connection({
-    cert: '../certs/cert.pem',
-    key: '../certs/key.pem'
+    cert: path.join(__dirname, 'cert.pem'),
+    key: path.join(__dirname, 'key.pem')
   });
 } else {
   var apn_connection = new apn.connection({
-    cert: '../certs/cert.pem',
-    key: '../certs/key.pem'
+    cert: path.join(__dirname, 'cert.pem'),
+    key: path.join(__dirname, 'key.pem')
   });
 }
 
@@ -60,7 +61,7 @@ exports.login = function(req, res) {
     req.logIn(user, function(err) {
       if (err) res.json({ error: err });
 
-      user.iphone_push_token = req.body.iphone_push_token;
+      user.iphone_push_token = req.query.iphone_push_token;
       user.save(function(err) {
         if (err) return res.json({ error: err });
         req.logIn(user, function(err) {
@@ -84,10 +85,10 @@ exports.login = function(req, res) {
 //   exists: bool
 // }
 exports.find_user = function(req, res) {
-  if (req.body.user === req.user.username) {
+  if (req.query.user === req.user.username) {
     return res.json({ error: "This is your username" });
   }
-  User.findOne({ username: req.body.user }, function(err, user) {
+  User.findOne({ username: req.query.user }, function(err, user) {
     if (!user) return res.json({ error: "User not found" });
     return res.json({ exists: true });
   });
@@ -105,19 +106,19 @@ exports.find_user = function(req, res) {
 //   success: bool
 // }
 exports.send = function(req, res) {
-  User.findOne({ username: req.body.recipient }, function(err, user) {
+  User.findOne({ username: req.query.recipient }, function(err, user) {
     if (!user) return res.json({ error: "Invalid recipient" });
 
     var note = new apn.notification();
     note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
     note.badge = 3;
     note.sound = "ping.aiff";
-    note.alert = req.body.message;
+    note.alert = req.query.message;
     note.payload = { 'messageFrom': req.user.username };
     apn_connection.pushNotification(note, user.iphone_push_token);
 
     return res.json({ recipient_push_token: user.iphone_push_token,
-      message: req.body.message, success: true });
+      message: req.query.message, success: true });
   });
 };
 
@@ -133,7 +134,7 @@ exports.send = function(req, res) {
 // }
 exports.save_friends = function(req, res) {
   req.user.friends = JSON.parse(req.query.friends);
-  console.log(req.user.friends);
+  console.log(req.query.friends);
   req.user.save(function(err) {
     if (err) return res.json({ error: err });
     return res.json({ success: true });
@@ -150,6 +151,7 @@ exports.save_friends = function(req, res) {
 //   friends: stringified friends
 // }
 exports.get_friends = function(req, res) {
+  if (!req.user || !req.user.friends) return res.json({ error: "Cannot find friends" });
   return res.json({ friends: req.user.friends });
 }
 
