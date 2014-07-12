@@ -86,19 +86,19 @@ exports.login = function(req, res) {
 //   success: bool
 // }
 exports.send = function(req, res) {
+  console.log(req.query);
   User.findOne({ username: req.query.recipient }, function(err, user) {
     if (!user) return res.json({ error: "Invalid recipient" });
 
     var note = new apn.notification();
-    note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+    note.expiry = Math.floor(Date.now() / 1000) + 36000; // Expires 1 hour from now.
     note.badge = 3;
     note.sound = "ping.aiff";
-    note.alert = req.query.message;
+    note.alert = req.user.username + ": " + req.query.message;
     note.payload = { 'messageFrom': req.user.username };
     apn_connection.pushNotification(note, user.iphone_push_token);
 
-    return res.json({ recipient_push_token: user.iphone_push_token,
-      message: req.query.message, success: true });
+    return res.json({ message: req.query.message, success: true });
   });
 };
 
