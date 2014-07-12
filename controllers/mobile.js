@@ -74,26 +74,6 @@ exports.login = function(req, res) {
   })(req, res);
 };
 
-// find_user req:
-// {
-//   mobile_auth_token: string,
-//   user: string, (username)
-// }
-// find_user res:
-// {
-//   error: string,
-//   exists: bool
-// }
-exports.find_user = function(req, res) {
-  if (req.query.user === req.user.username) {
-    return res.json({ error: "This is your username" });
-  }
-  User.findOne({ username: req.query.user }, function(err, user) {
-    if (!user) return res.json({ error: "User not found" });
-    return res.json({ exists: true });
-  });
-};
-
 // send req:
 // {
 //   mobile_auth_token: string,
@@ -139,6 +119,26 @@ exports.save_friend = function(req, res) {
     return res.json({ success: true });
   });
 }
+
+// find_user req:
+// {
+//   mobile_auth_token: string,
+//   user: string, (username)
+// }
+// find_user res:
+// {
+//   error: string,
+//   exists: bool
+// }
+exports.find_user = function(req, res, next) {
+  if (req.query.friend === req.user.username) {
+    return res.json({ error: "This is your username" });
+  }
+  User.findOne({ username: req.query.friend }, function(err, user) {
+    if (!user) return res.json({ error: "User not found" });
+    next();
+  });
+};
 
 // get_friends req:
 // {
