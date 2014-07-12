@@ -30,7 +30,14 @@ exports.login = function(req, res) {
     }
     req.logIn(user, function(err) {
       if (err) res.json({ error: err });
-      return res.json({ success: true, mobile_auth_token: user.mobile_auth_token });
+
+      user.iphone_push_token = req.body.iphone_push_token;
+      user.save(function(err) {
+        if (err) return res.json({ error: err });
+        req.logIn(user, function(err) {
+          res.json({ success: true, mobile_auth_token: user.mobile_auth_token });
+        });
+      });
     });
   })(req, res);
 };

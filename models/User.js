@@ -10,7 +10,7 @@ var userSchema = new mongoose.Schema({
   tokens: Array,
 
   mobile_auth_token: String,
-  iphone_push_token: Array,
+  iphone_push_token: String,
 
   profile: {
     name: { type: String, default: '' },
