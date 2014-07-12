@@ -61,7 +61,8 @@ var week = day * 7;
  * CSRF whitelist.
  */
 
-var csrfExclude = ['/mobile/login', '/mobile/send', '/mobile/find_user'];
+var csrfExclude = ['/mobile/login', '/mobile/send',
+  '/mobile/find_user', '/mobile/save_friends', '/mobile/get_friends'];
 
 /**
  * Express configuration.
@@ -143,6 +144,8 @@ app.get('/account/unlink/:provider', passportConf.isAuthenticated, userControlle
 app.post('/mobile/login', mobileController.login);
 app.post('/mobile/send', mobileController.auth, mobileController.send);
 app.post('/mobile/find_user', mobileController.auth, mobileController.find_user);
+app.post('/mobile/save_friends', mobileController.auth, mobileController.save_friends);
+app.post('/mobile/get_friends', mobileController.auth, mobileController.get_friends);
 
 /**
  * API examples routes.

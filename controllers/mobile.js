@@ -82,6 +82,37 @@ exports.send = function(req, res) {
   });
 };
 
+// save_friends req:
+// {
+//   mobile_auth_token: string,
+//   friends: stringified friends
+// }
+// save_friends res:
+// {
+//   error: string,
+//   success: bool
+// }
+exports.save_friends = function(req, res) {
+  req.user.friends = req.body.friends;
+  req.user.save(function(err) {
+    if (err) return res.json({ error: err });
+    return res.json({ success: true });
+  });
+}
+
+// get_friends req:
+// {
+//   mobile_auth_token: string,
+// }
+// get_friends res:
+// {
+//   error: string,
+//   friends: stringified friends
+// }
+exports.get_friends = function(req, res) {
+  return res.json({ friends: req.user.friends });
+}
+
 //middleware for mobile auth
 exports.auth = function(req, res, next) {
   User.findOne({ mobile_auth_token: req.body.mobile_auth_token }, function (err, user) {
