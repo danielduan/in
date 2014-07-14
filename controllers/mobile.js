@@ -50,7 +50,7 @@ exports.login = function(req, res) {
   var errors = req.validationErrors();
 
   if (errors) {
-    return res.json({ error: errors.join(" ") });
+    return res.json({ error: errors });
   }
 
   passport.authenticate('local', function(err, user, info) {
@@ -72,6 +72,39 @@ exports.login = function(req, res) {
       });
     });
   })(req, res);
+};
+
+exports.signup = function(req, res) {
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('username', 'Username is empty').notEmpty();
+  req.assert('password', 'Password must be at least 4 characters long').len(4);
+  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+
+  var errors = req.validationErrors();
+
+  if (errors) {
+    return res.json(errors);
+  }
+
+  var user = new User({
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password
+  });
+
+  User.findOne({ email: req.body.email }, function(err, existingUser) {
+    if (existingUser) {
+      req.flash('errors', { msg: 'Account with that email address already exists.' });
+      return res.redirect('/signup');
+    }
+    user.save(function(err) {
+      if (err) return next(err);
+      req.logIn(user, function(err) {
+        if (err) return next(err);
+        res.redirect('/');
+      });
+    });
+  });
 };
 
 // send req:

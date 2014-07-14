@@ -61,7 +61,7 @@ var week = day * 7;
  * CSRF whitelist.
  */
 
-var csrfExclude = ['/mobile/login', '/mobile/send',
+var csrfExclude = ['/mobile/login', '/mobile/send', '/mobile/signup',
   '/mobile/find_user', '/mobile/save_friend', '/mobile/get_friends'];
 
 /**
@@ -147,6 +147,7 @@ app.get('/mobile/send', mobileController.auth, mobileController.send);
 app.get('/mobile/save_friend', mobileController.auth, mobileController.find_user, mobileController.save_friend);
 app.get('/mobile/get_friends', mobileController.auth, mobileController.get_friends);
 
+app.post('/mobile/signup', mobileController.signup);
 app.post('/mobile/login', mobileController.login);
 app.post('/mobile/send', mobileController.auth, mobileController.send);
 // app.post('/mobile/find_user', mobileController.auth, mobileController.find_user);
