@@ -1,0 +1,28 @@
+<ons-page class="center" title="Sign Up" ng-controller="signup">
+  <ons-row align="center" class="full-height">
+    <ons-col align="left">
+        <p>Email</p>
+        <ons-text-input ng-model="email" type="text"
+          placeholder="jweiner@linkedin.com" class="full-width">
+        </ons-text-input>
+        <p>Username</p>
+        <ons-text-input ng-model="username" placeholder="jeffweiner"
+          class="full-width">
+        </ons-text-input>
+        <p>Password</p>
+        <ons-text-input ng-model="password" type="password"
+          placeholder="password" class="full-width">
+        </ons-text-input>
+        <ons-text-input ng-model="password_confirm" type="password"
+          placeholder="confirm password" class="full-width">
+        </ons-text-input>
+        <p ng-bind="status"></p>
+        <ons-button type="large" should-spin="{{signup_submitted}}"
+          disabled="{{signup_submitted}}"
+          ng-click="register()" style="margin-top: 25%">
+          Submit
+        </ons-button>
+        <span ng-show="error">Good boy!</span>
+    </ons-col>
+  </ons-row>
+</ons-page>
