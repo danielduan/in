@@ -45,6 +45,8 @@ apn_connection.on('socketError', console.error);
 //   mobile_auth_token: string
 // }
 exports.login = function(req, res) {
+  console.log(req.body);
+
   req.assert('email', 'Email is not valid').isEmail();
   req.assert('password', 'Password cannot be blank').notEmpty();
   var errors = req.validationErrors();
