@@ -77,7 +77,7 @@ app.use(connectAssets({
   helperContext: app.locals
 }));
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ type: 'application/*' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(methodOverride());
