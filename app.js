@@ -96,7 +96,10 @@ app.use(passport.session());
 app.use(flash());
 app.use(function(req, res, next) {
   // CSRF protection.
-  if (_.contains(csrfExclude, req.path)) return next();
+  if (_.contains(csrfExclude, req.path)) {
+    res.setHeader('Access-Control-Allow-Origin','*');  
+    return next();
+  }
   csrf(req, res, next);
 });
 app.use(function(req, res, next) {
